@@ -26,4 +26,8 @@ public class ControladorUsuario {
          List<Usuario> usuarios = new Usuario().listaDocentes();
          return usuarios;
     }
+    
+    public Usuario inicioSesion(Usuario usuario){
+         return usuario.validarSesion(usuario);
+    }
 }

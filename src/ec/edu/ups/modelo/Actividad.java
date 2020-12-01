@@ -76,7 +76,7 @@ public class Actividad extends DatoActividad{
     
     public List<Actividad> listaActividades(int idCurso){
         List<Actividad> actividads = new ArrayList<>();
-        String sqlstm = "SELECT * FROM unidadeducativa.activida where cursoId = " + idCurso;
+        String sqlstm = "SELECT * FROM unidadeducativa.actividad where cursoId = " + idCurso;
         try {
             ConexionSql.getConnection();
             Connection conn = ConexionSql.getConn();

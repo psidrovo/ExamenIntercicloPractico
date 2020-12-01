@@ -66,9 +66,21 @@ public class VistaAdministarRector extends javax.swing.JInternalFrame {
         cmbCurso = new javax.swing.JComboBox<>();
         btnGuardarAdministracion = new javax.swing.JButton();
 
-        addFocusListener(new java.awt.event.FocusAdapter() {
-            public void focusGained(java.awt.event.FocusEvent evt) {
-                formFocusGained(evt);
+        addInternalFrameListener(new javax.swing.event.InternalFrameListener() {
+            public void internalFrameActivated(javax.swing.event.InternalFrameEvent evt) {
+                formInternalFrameActivated(evt);
+            }
+            public void internalFrameClosed(javax.swing.event.InternalFrameEvent evt) {
+            }
+            public void internalFrameClosing(javax.swing.event.InternalFrameEvent evt) {
+            }
+            public void internalFrameDeactivated(javax.swing.event.InternalFrameEvent evt) {
+            }
+            public void internalFrameDeiconified(javax.swing.event.InternalFrameEvent evt) {
+            }
+            public void internalFrameIconified(javax.swing.event.InternalFrameEvent evt) {
+            }
+            public void internalFrameOpened(javax.swing.event.InternalFrameEvent evt) {
             }
         });
 
@@ -297,33 +309,49 @@ public class VistaAdministarRector extends javax.swing.JInternalFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnGuardarDocenteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarDocenteActionPerformed
+        ExpresionRegular ex = new ExpresionRegular();
+        ExpresionRegular exNombre = new ExpresionRegular();
+        ExpresionRegular exCedula = new ExpresionRegular();
+        ex.ingresarRegex("^\\w{2,}\\@\\w{2,}(\\.\\w{2,})+$");
+        exNombre.ingresarRegex("^(\\w)+$");
+        exCedula.ingresarRegex("^\\d{10}");
         if (dtcFechaNacimiento.getDate() == null) {
             JOptionPane.showMessageDialog(null, "FORMATO DE FECHA NO VALIDA", "ERROR DE DATOS", JOptionPane.WARNING_MESSAGE);
-        } else {
+        } else if (!ex.validar(txtCorreo.getText())) {
+            JOptionPane.showMessageDialog(null, "CORREO NO VALIDO", "ERROR DE DATOS", JOptionPane.WARNING_MESSAGE);
+        } else if (!exNombre.validar(txtNombre.getText()) || !exNombre.validar(txtApellido.getText())) {
+            JOptionPane.showMessageDialog(null, "NOMBRE Y/O APELLIDO NO VALIDO NO DEBEN CONTENER ESPACIOS", "ERROR DE DATOS", JOptionPane.WARNING_MESSAGE);
+        } else if(!exCedula.validar(txtCedula.getText())){
+            JOptionPane.showMessageDialog(null, "CEDULA NO VALIDA", "ERROR DE DATOS", JOptionPane.WARNING_MESSAGE);
+        }else{
             java.sql.Date fechaSql = java.sql.Date.valueOf(dtcFechaNacimiento.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
             controladorUsuario.crear(new Usuario(txtCorreo.getText(), txtPassword.getText(), "DOCENTE", txtCedula.getText(), txtNombre.getText(), txtApellido.getText(), txtDireccion.getText(), fechaSql, cmbGenero.getSelectedItem().toString()));
             cargarDocentes();
+            limpiarDatosDocente();
         }
     }//GEN-LAST:event_btnGuardarDocenteActionPerformed
 
     private void btnGuardarCursoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarCursoActionPerformed
         controladorCurso.crear(new Curso(txtNombreCurso.getText()));
         cargarCursos();
+        txtNombreCurso.setText("");
     }//GEN-LAST:event_btnGuardarCursoActionPerformed
 
     private void btnGuardarAdministracionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarAdministracionActionPerformed
         ExpresionRegular ex = new ExpresionRegular();
         ex.ingresarRegex("\\d+");
-        if (ex.validar(cmbDocente.getSelectedItem().toString()) || ex.validar(cmbCurso.getSelectedItem().toString()))
+        if (ex.validar(cmbDocente.getSelectedItem().toString()) && ex.validar(cmbCurso.getSelectedItem().toString()))
             controladorCurso.asignarDocente(new Curso(ex.obtenerId(cmbCurso.getSelectedItem().toString()), ex.obtenerId(cmbDocente.getSelectedItem().toString())));
         else
             JOptionPane.showMessageDialog(null, "NO SE HA SELECCIONA UN DOCENTE Y/O CURSO", "ERROR DE DATOS", JOptionPane.WARNING_MESSAGE);
     }//GEN-LAST:event_btnGuardarAdministracionActionPerformed
 
-    private void formFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_formFocusGained
+    private void formInternalFrameActivated(javax.swing.event.InternalFrameEvent evt) {//GEN-FIRST:event_formInternalFrameActivated
         cargarCursos();
         cargarDocentes();
-    }//GEN-LAST:event_formFocusGained
+        limpiarDatosDocente();
+        txtNombreCurso.setText("");
+    }//GEN-LAST:event_formInternalFrameActivated
 
     private void cargarDocentes() {
         cmbDocente.removeAll();
@@ -339,6 +367,15 @@ public class VistaAdministarRector extends javax.swing.JInternalFrame {
         controladorCurso.listaCursos().forEach(curso -> {
             cmbCurso.addItem(curso.getId() + " - " + curso.getNombre());
         });
+    }
+    
+    private void limpiarDatosDocente(){
+        txtCedula.setText("");
+        txtNombre.setText("");
+        txtApellido.setText("");
+        txtDireccion.setText("");
+        txtCorreo.setText("");
+        txtPassword.setText("");
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

@@ -28,6 +28,7 @@ public class ValidarSesion {
     private ValidarSesion(int id, int curso, String rol) {        
         this.id = id;
         this.curso=curso;
+        this.rol=rol;
     }
 
     public int getId() {

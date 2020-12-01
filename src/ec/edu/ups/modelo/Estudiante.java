@@ -71,11 +71,10 @@ public class Estudiante extends Persona{
         }
     }
     
-    public List<Estudiante> listaEstudiantes(){
+    public List<Estudiante> listaEstudiantes(int id){
         List<Estudiante> estudiantes = new ArrayList<>();
-        String sqlstm = """
-                        SELECT pr.id, pr.cedula, pr.nombre, pr.apellido, pr.fechaNacimiento, pr.genero FROM unidadeducativa.persona as pr 
-                        inner join unidadeducativa.estudiante as est on est.estudianteId = pr.id""";
+        String sqlstm = "SELECT pr.id, pr.cedula, pr.nombre, pr.apellido, pr.fechaNacimiento, pr.genero FROM unidadeducativa.persona as pr"
+                        +" inner join unidadeducativa.estudiante as est on est.estudianteId = pr.id where est.cursoId = " + id;
         try {
             ConexionSql.getConnection();
             Connection conn = ConexionSql.getConn();//Direcion

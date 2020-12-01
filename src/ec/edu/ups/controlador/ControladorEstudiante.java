@@ -22,8 +22,8 @@ public class ControladorEstudiante {
         }
     }
     
-    public List<Estudiante> listaEstudiantes(){
-         List<Estudiante> estudiantes = new Estudiante().listaEstudiantes();
+    public List<Estudiante> listaEstudiantes(int id){
+         List<Estudiante> estudiantes = new Estudiante().listaEstudiantes(id);
          return estudiantes;
     }
 }

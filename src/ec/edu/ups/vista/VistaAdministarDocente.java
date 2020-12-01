@@ -11,6 +11,7 @@ import ec.edu.ups.modelo.Actividad;
 import ec.edu.ups.modelo.Estudiante;
 import ec.edu.ups.modelo.ExpresionRegular;
 import ec.edu.ups.modelo.ValidarSesion;
+import java.time.ZoneId;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
@@ -66,9 +67,21 @@ public class VistaAdministarDocente extends javax.swing.JInternalFrame {
         jLabel25 = new javax.swing.JLabel();
         btnCargarActividad = new javax.swing.JButton();
 
-        addFocusListener(new java.awt.event.FocusAdapter() {
-            public void focusGained(java.awt.event.FocusEvent evt) {
-                formFocusGained(evt);
+        addInternalFrameListener(new javax.swing.event.InternalFrameListener() {
+            public void internalFrameActivated(javax.swing.event.InternalFrameEvent evt) {
+                formInternalFrameActivated(evt);
+            }
+            public void internalFrameClosed(javax.swing.event.InternalFrameEvent evt) {
+            }
+            public void internalFrameClosing(javax.swing.event.InternalFrameEvent evt) {
+            }
+            public void internalFrameDeactivated(javax.swing.event.InternalFrameEvent evt) {
+            }
+            public void internalFrameDeiconified(javax.swing.event.InternalFrameEvent evt) {
+            }
+            public void internalFrameIconified(javax.swing.event.InternalFrameEvent evt) {
+            }
+            public void internalFrameOpened(javax.swing.event.InternalFrameEvent evt) {
             }
         });
 
@@ -94,6 +107,8 @@ public class VistaAdministarDocente extends javax.swing.JInternalFrame {
                 btnGuardarAlumnoActionPerformed(evt);
             }
         });
+
+        dcFechaNacimiento.setDateFormatString("dd-MM-yyyy");
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -275,14 +290,12 @@ public class VistaAdministarDocente extends javax.swing.JInternalFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jScrollPane2)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addComponent(jLabel25)
-                                        .addGap(35, 35, 35)
-                                        .addComponent(cmbActividad, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                    .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                .addGroup(layout.createSequentialGroup()
+                                    .addComponent(jLabel25)
+                                    .addGap(35, 35, 35)
+                                    .addComponent(cmbActividad, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addContainerGap())
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addGap(206, 206, 206)
@@ -313,19 +326,29 @@ public class VistaAdministarDocente extends javax.swing.JInternalFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnGuardarAlumnoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarAlumnoActionPerformed
-        controladorEstudiante.crear(new Estudiante(sesionIniciado.getCurso(), txtCedula.getText(), txtNombre.getText(), txtApellido.getText(), txtDireccion.getText(), dcFechaNacimiento.getDate(), cmbGenero.getSelectedItem().toString()));
-        cargarEstudiantes();
+        ExpresionRegular ex = new ExpresionRegular();
+        ExpresionRegular exNombre = new ExpresionRegular();
+        ex.ingresarRegex("^\\d{10}");
+        exNombre.ingresarRegex("^\\w+$");
+        if (dcFechaNacimiento.getDate() == null) {
+            JOptionPane.showMessageDialog(null, "FORMATO DE FECHA NO VALIDA", "ERROR DE DATOS", JOptionPane.WARNING_MESSAGE);
+        } else if (!ex.validar(txtCedula.getText())) {
+            JOptionPane.showMessageDialog(null, "CEDULA NO VALIDA", "ERROR DE DATOS", JOptionPane.WARNING_MESSAGE);
+        } else if (!exNombre.validar(txtNombre.getText()) || !exNombre.validar(txtApellido.getText())) {
+            JOptionPane.showMessageDialog(null, "NOMBRE Y/O APELLIDO NO VALIDO NO DEBEN CONTENER ESPACIOS", "ERROR DE DATOS", JOptionPane.WARNING_MESSAGE);
+        } else {
+            java.sql.Date fechaSql = java.sql.Date.valueOf(dcFechaNacimiento.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
+            controladorEstudiante.crear(new Estudiante(sesionIniciado.getCurso(), txtCedula.getText(), txtNombre.getText(), txtApellido.getText(), txtDireccion.getText(), fechaSql, cmbGenero.getSelectedItem().toString()));
+            cargarEstudiantes();
+            limpiarDatosEstudiante();
+        }
     }//GEN-LAST:event_btnGuardarAlumnoActionPerformed
 
     private void btnGuardarActividadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarActividadActionPerformed
         controladorActividad.crear(new Actividad(sesionIniciado.getCurso(), txtNombreActividad.getText()));
         cargarActividades();
+        txtNombreActividad.setText("");
     }//GEN-LAST:event_btnGuardarActividadActionPerformed
-
-    private void formFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_formFocusGained
-        cargarEstudiantes();
-        cargarActividades();
-    }//GEN-LAST:event_formFocusGained
 
     private void btnCargarActividadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCargarActividadActionPerformed
         ExpresionRegular ex = new ExpresionRegular();
@@ -333,15 +356,22 @@ public class VistaAdministarDocente extends javax.swing.JInternalFrame {
         if (ex.validar(cmbActividad.getSelectedItem().toString()))
             cargarDatosAsignatura(ex.obtenerId(cmbActividad.getSelectedItem().toString()));
         else
-            JOptionPane.showMessageDialog(null, "SELECCIONE UNA ACTIVIDAD", "ERROR DE DATOS", JOptionPane.WARNING_MESSAGE);            
+            JOptionPane.showMessageDialog(null, "SELECCIONE UNA ACTIVIDAD", "ERROR DE DATOS", JOptionPane.WARNING_MESSAGE);
     }//GEN-LAST:event_btnCargarActividadActionPerformed
+
+    private void formInternalFrameActivated(javax.swing.event.InternalFrameEvent evt) {//GEN-FIRST:event_formInternalFrameActivated
+        cargarEstudiantes();
+        cargarActividades();
+        limpiarDatosEstudiante();
+        txtNombreActividad.setText("");
+    }//GEN-LAST:event_formInternalFrameActivated
 
     private void cargarEstudiantes() {
         DefaultTableModel modelo = (DefaultTableModel) tblAlumno.getModel();
         modelo.setRowCount(0);
         tblAlumno.setModel(modelo);
         Object[] fila = new Object[7];
-        controladorEstudiante.listaEstudiantes().stream().map(estudiante -> {
+        controladorEstudiante.listaEstudiantes(sesionIniciado.getCurso()).stream().map(estudiante -> {
             fila[0] = estudiante.getId();
             return estudiante;
         }).map(estudiante -> {
@@ -386,6 +416,12 @@ public class VistaAdministarDocente extends javax.swing.JInternalFrame {
         this.tblAlumno.setModel(modelo);
     }
 
+    private void limpiarDatosEstudiante(){
+        txtCedula.setText("");
+        txtNombre.setText("");
+        txtApellido.setText("");
+        txtDireccion.setText("");
+    }
     private void cargarActividades() {
         cmbActividad.removeAll();
         cmbActividad.addItem("SELECIONAR ACTIVIDAD");
@@ -393,6 +429,7 @@ public class VistaAdministarDocente extends javax.swing.JInternalFrame {
             cmbActividad.addItem(actividad.getId() + " - " + actividad.getTema());
         });
     }
+    
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCargarActividad;
@@ -400,39 +437,25 @@ public class VistaAdministarDocente extends javax.swing.JInternalFrame {
     private javax.swing.JButton btnGuardarAlumno;
     private javax.swing.JComboBox<String> cmbActividad;
     private javax.swing.JComboBox<String> cmbGenero;
-    private javax.swing.JComboBox<String> cmbGeneroComprometido2;
     private com.toedter.calendar.JDateChooser dcFechaNacimiento;
-    private datechooser.beans.DateChooserCombo dtchFechaNacimiento1;
-    private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
-    private javax.swing.JLabel jLabel13;
-    private javax.swing.JLabel jLabel14;
-    private javax.swing.JLabel jLabel15;
-    private javax.swing.JLabel jLabel16;
-    private javax.swing.JLabel jLabel17;
-    private javax.swing.JLabel jLabel18;
     private javax.swing.JLabel jLabel19;
     private javax.swing.JLabel jLabel25;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel3;
-    private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTable jTable2;
     private javax.swing.JTable tblAlumno;
     private javax.swing.JTextField txtApellido;
-    private javax.swing.JTextField txtApellidoComprometido2;
     private javax.swing.JTextField txtCedula;
-    private javax.swing.JTextField txtCedulaComprometido4;
     private javax.swing.JTextField txtDireccion;
-    private javax.swing.JTextField txtDireccionComprometido2;
     private javax.swing.JTextField txtNombre;
     private javax.swing.JTextField txtNombreActividad;
-    private javax.swing.JTextField txtNombreComprometido2;
     // End of variables declaration//GEN-END:variables
 }

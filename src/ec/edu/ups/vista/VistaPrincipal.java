@@ -5,19 +5,25 @@
  */
 package ec.edu.ups.vista;
 
+import ec.edu.ups.modelo.ValidarSesion;
+import javax.swing.JOptionPane;
+
 /**
  *
  * @author Paul Idrovo
  */
-public class Principal extends javax.swing.JFrame {
+public class VistaPrincipal extends javax.swing.JFrame {
 
     private VistaAdministarDocente vistaAdministarDocente;
     private VistaAdministarRector vistaAdministarRector;
+    private VistaInicioSesion vistaInicioSesion;
 
-    public Principal() {
+    public VistaPrincipal() {
         initComponents();
         vistaAdministarDocente = new VistaAdministarDocente();
         vistaAdministarRector = new VistaAdministarRector();
+        vistaInicioSesion = new VistaInicioSesion();
+        desktopPane.add(vistaInicioSesion);
         desktopPane.add(vistaAdministarDocente);
         desktopPane.add(vistaAdministarRector);
     }
@@ -48,10 +54,20 @@ public class Principal extends javax.swing.JFrame {
 
         mitInicioSesion.setMnemonic('o');
         mitInicioSesion.setText("Iniciar Sesion");
+        mitInicioSesion.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                mitInicioSesionActionPerformed(evt);
+            }
+        });
         fileMenu1.add(mitInicioSesion);
 
         mitFinalizarSesion.setMnemonic('s');
         mitFinalizarSesion.setText("Finalizar Sesion");
+        mitFinalizarSesion.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                mitFinalizarSesionActionPerformed(evt);
+            }
+        });
         fileMenu1.add(mitFinalizarSesion);
 
         menuBar.add(fileMenu1);
@@ -90,11 +106,15 @@ public class Principal extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(desktopPane, javax.swing.GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(desktopPane, javax.swing.GroupLayout.PREFERRED_SIZE, 1357, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(desktopPane, javax.swing.GroupLayout.DEFAULT_SIZE, 279, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(desktopPane, javax.swing.GroupLayout.PREFERRED_SIZE, 821, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
 
         pack();
@@ -102,16 +122,45 @@ public class Principal extends javax.swing.JFrame {
 
     private void mitAdministarRectorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mitAdministarRectorActionPerformed
         ocultar();
-        vistaAdministarRector.setVisible(true);
+        ValidarSesion vlSesion = ValidarSesion.getValidarSesion(0, 0, "");
+        if (vlSesion.getRol().equals("RECTOR")) {
+            vistaAdministarRector.setVisible(true);
+        } else {
+            JOptionPane.showMessageDialog(null, "NO TIENE PERMISOS PARA ESTA SECCION", "ACCESO DENEGADO", JOptionPane.WARNING_MESSAGE);
+        }
     }//GEN-LAST:event_mitAdministarRectorActionPerformed
 
     private void mitAdministrarDocenteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mitAdministrarDocenteActionPerformed
         ocultar();
-        vistaAdministarDocente.setVisible(true);
+        ValidarSesion vlSesion = ValidarSesion.getValidarSesion(0, 0, " ");
+        if (vlSesion.getRol().equals("DOCENTE")) {
+            if (vlSesion.getCurso() != 0) {
+                vistaAdministarDocente.setVisible(true);
+            }else{
+               JOptionPane.showMessageDialog(null, "NO TIENE CURSO ASIGNADO", "ACCESO DENEGADO", JOptionPane.WARNING_MESSAGE); 
+            }
+        } else {
+            JOptionPane.showMessageDialog(null, "NO TIENE PERMISOS PARA ESTA SECCION", "ACCESO DENEGADO", JOptionPane.WARNING_MESSAGE);
+        }
     }//GEN-LAST:event_mitAdministrarDocenteActionPerformed
+
+    private void mitInicioSesionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mitInicioSesionActionPerformed
+        ocultar();
+        vistaInicioSesion.setVisible(true);
+    }//GEN-LAST:event_mitInicioSesionActionPerformed
+
+    private void mitFinalizarSesionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mitFinalizarSesionActionPerformed
+        ocultar();
+        ValidarSesion vlSesion = ValidarSesion.getValidarSesion(0, 0, "");
+        vlSesion.setId(0);
+        vlSesion.setCurso(0);
+        vlSesion.setRol("");
+        JOptionPane.showMessageDialog(null, "SESION FINALIZADA", "LOGIN", JOptionPane.INFORMATION_MESSAGE);
+    }//GEN-LAST:event_mitFinalizarSesionActionPerformed
     private void ocultar() {
         vistaAdministarDocente.setVisible(false);
         vistaAdministarRector.setVisible(false);
+        vistaInicioSesion.setVisible(false);
     }
 
     /**
@@ -131,20 +180,21 @@ public class Principal extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(Principal.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(VistaPrincipal.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(Principal.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(VistaPrincipal.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(Principal.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(VistaPrincipal.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(Principal.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(VistaPrincipal.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
         //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new Principal().setVisible(true);
+                new VistaPrincipal().setVisible(true);
             }
         });
     }
