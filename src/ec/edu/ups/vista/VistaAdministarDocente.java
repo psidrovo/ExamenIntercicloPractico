@@ -9,20 +9,26 @@ import ec.edu.ups.controlador.ControladorActividad;
 import ec.edu.ups.controlador.ControladorEstudiante;
 import ec.edu.ups.modelo.Actividad;
 import ec.edu.ups.modelo.Estudiante;
+import ec.edu.ups.modelo.ExpresionRegular;
+import ec.edu.ups.modelo.ValidarSesion;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
  * @author Paul Idrovo
  */
-public class AdministarDocente extends javax.swing.JInternalFrame {
+public class VistaAdministarDocente extends javax.swing.JInternalFrame {
 
     private ControladorEstudiante controladorEstudiante;
     private ControladorActividad controladorActividad;
-    
-    public AdministarDocente() {
+    ValidarSesion sesionIniciado;
+
+    public VistaAdministarDocente() {
         initComponents();
         controladorEstudiante = new ControladorEstudiante();
         controladorActividad = new ControladorActividad();
+        sesionIniciado = ValidarSesion.getValidarSesion(0, 0, "");
     }
 
     /**
@@ -53,12 +59,18 @@ public class AdministarDocente extends javax.swing.JInternalFrame {
         txtNombreActividad = new javax.swing.JTextField();
         btnGuardarActividad = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        tblAlumno = new javax.swing.JTable();
         jScrollPane2 = new javax.swing.JScrollPane();
         jTable2 = new javax.swing.JTable();
         cmbActividad = new javax.swing.JComboBox<>();
         jLabel25 = new javax.swing.JLabel();
         btnCargarActividad = new javax.swing.JButton();
+
+        addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                formFocusGained(evt);
+            }
+        });
 
         jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder("AGREGAR ALUMNO"));
 
@@ -187,28 +199,28 @@ public class AdministarDocente extends javax.swing.JInternalFrame {
                 .addContainerGap())
         );
 
-        jTable1.setBorder(javax.swing.BorderFactory.createTitledBorder("ALMUNOS"));
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        tblAlumno.setBorder(javax.swing.BorderFactory.createTitledBorder("ALMUNOS"));
+        tblAlumno.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
             new String [] {
-                "CODIGO", "NOMBRE", "APELLIDO", "DIRECCION", "F. NACIMIENTO", "GENERO"
+                "CODIGO", "CEDULA", "NOMBRE", "APELLIDO", "DIRECCION", "F. NACIMIENTO", "GENERO"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false
+                false, false, false, false, false, false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
                 return canEdit [columnIndex];
             }
         });
-        jScrollPane1.setViewportView(jTable1);
-        if (jTable1.getColumnModel().getColumnCount() > 0) {
-            jTable1.getColumnModel().getColumn(0).setMinWidth(80);
-            jTable1.getColumnModel().getColumn(0).setPreferredWidth(80);
-            jTable1.getColumnModel().getColumn(0).setMaxWidth(140);
+        jScrollPane1.setViewportView(tblAlumno);
+        if (tblAlumno.getColumnModel().getColumnCount() > 0) {
+            tblAlumno.getColumnModel().getColumn(0).setMinWidth(80);
+            tblAlumno.getColumnModel().getColumn(0).setPreferredWidth(80);
+            tblAlumno.getColumnModel().getColumn(0).setMaxWidth(140);
         }
 
         jTable2.setBorder(javax.swing.BorderFactory.createTitledBorder("ACTIVIDADES"));
@@ -240,6 +252,11 @@ public class AdministarDocente extends javax.swing.JInternalFrame {
         jLabel25.setText("SELEC. ACTIVIDAD");
 
         btnCargarActividad.setText("CARGAR");
+        btnCargarActividad.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCargarActividadActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -296,13 +313,86 @@ public class AdministarDocente extends javax.swing.JInternalFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnGuardarAlumnoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarAlumnoActionPerformed
-        controladorEstudiante.Crear(new Estudiante(0, txtCedula.getText(), txtNombre.getText(), txtApellido.getText(), txtDireccion.getText(), dcFechaNacimiento.getDate(), cmbGenero.getSelectedItem().toString()));
+        controladorEstudiante.crear(new Estudiante(sesionIniciado.getCurso(), txtCedula.getText(), txtNombre.getText(), txtApellido.getText(), txtDireccion.getText(), dcFechaNacimiento.getDate(), cmbGenero.getSelectedItem().toString()));
+        cargarEstudiantes();
     }//GEN-LAST:event_btnGuardarAlumnoActionPerformed
 
     private void btnGuardarActividadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarActividadActionPerformed
-        controladorActividad.Crear(new Actividad(0, txtNombreActividad.getText()));
+        controladorActividad.crear(new Actividad(sesionIniciado.getCurso(), txtNombreActividad.getText()));
+        cargarActividades();
     }//GEN-LAST:event_btnGuardarActividadActionPerformed
 
+    private void formFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_formFocusGained
+        cargarEstudiantes();
+        cargarActividades();
+    }//GEN-LAST:event_formFocusGained
+
+    private void btnCargarActividadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCargarActividadActionPerformed
+        ExpresionRegular ex = new ExpresionRegular();
+        ex.ingresarRegex("\\d+");
+        if (ex.validar(cmbActividad.getSelectedItem().toString()))
+            cargarDatosAsignatura(ex.obtenerId(cmbActividad.getSelectedItem().toString()));
+        else
+            JOptionPane.showMessageDialog(null, "SELECCIONE UNA ACTIVIDAD", "ERROR DE DATOS", JOptionPane.WARNING_MESSAGE);            
+    }//GEN-LAST:event_btnCargarActividadActionPerformed
+
+    private void cargarEstudiantes() {
+        DefaultTableModel modelo = (DefaultTableModel) tblAlumno.getModel();
+        modelo.setRowCount(0);
+        tblAlumno.setModel(modelo);
+        Object[] fila = new Object[7];
+        controladorEstudiante.listaEstudiantes().stream().map(estudiante -> {
+            fila[0] = estudiante.getId();
+            return estudiante;
+        }).map(estudiante -> {
+            fila[1] = estudiante.getCedula();
+            return estudiante;
+        }).map(estudiante -> {
+            fila[2] = estudiante.getNombre();
+            return estudiante;
+        }).map(estudiante -> {
+            fila[3] = estudiante.getApellido();
+            return estudiante;
+        }).map(estudiante -> {
+            fila[4] = estudiante.getDireccion();
+            return estudiante;
+        }).map(estudiante -> {
+            fila[5] = estudiante.getFecha();
+            return estudiante;
+        }).map(estudiante -> {
+            fila[6] = estudiante.getGenero();
+            return estudiante;
+        }).forEachOrdered(_item -> {
+            modelo.addRow(fila);
+        });
+        this.tblAlumno.setModel(modelo);
+        //controladorEstudiante
+    }
+
+    private void cargarDatosAsignatura(int actividadId) {
+        DefaultTableModel modelo = (DefaultTableModel) tblAlumno.getModel();
+        modelo.setRowCount(0);
+        tblAlumno.setModel(modelo);
+        Object[] fila = new Object[7];
+        controladorActividad.listaDatosActividades(actividadId).stream().map(datosActividad -> {
+            fila[0] = datosActividad.getId();
+            return datosActividad;
+        }).map(datosActividad -> {
+            fila[1] = datosActividad.getTema();
+            return datosActividad;
+        }).forEachOrdered(datosActividad -> {
+            fila[2] = datosActividad.getLink();
+        });
+        this.tblAlumno.setModel(modelo);
+    }
+
+    private void cargarActividades() {
+        cmbActividad.removeAll();
+        cmbActividad.addItem("SELECIONAR ACTIVIDAD");
+        controladorActividad.listaActividades(sesionIniciado.getCurso()).forEach(actividad -> {
+            cmbActividad.addItem(actividad.getId() + " - " + actividad.getTema());
+        });
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCargarActividad;
@@ -333,8 +423,8 @@ public class AdministarDocente extends javax.swing.JInternalFrame {
     private javax.swing.JPanel jPanel5;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JTable jTable1;
     private javax.swing.JTable jTable2;
+    private javax.swing.JTable tblAlumno;
     private javax.swing.JTextField txtApellido;
     private javax.swing.JTextField txtApellidoComprometido2;
     private javax.swing.JTextField txtCedula;

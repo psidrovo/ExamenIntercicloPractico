@@ -11,11 +11,15 @@ package ec.edu.ups.vista;
  */
 public class Principal extends javax.swing.JFrame {
 
-    /**
-     * Creates new form Principal
-     */
+    private VistaAdministarDocente vistaAdministarDocente;
+    private VistaAdministarRector vistaAdministarRector;
+
     public Principal() {
         initComponents();
+        vistaAdministarDocente = new VistaAdministarDocente();
+        vistaAdministarRector = new VistaAdministarRector();
+        desktopPane.add(vistaAdministarDocente);
+        desktopPane.add(vistaAdministarRector);
     }
 
     /**
@@ -33,11 +37,9 @@ public class Principal extends javax.swing.JFrame {
         mitInicioSesion = new javax.swing.JMenuItem();
         mitFinalizarSesion = new javax.swing.JMenuItem();
         fileMenu = new javax.swing.JMenu();
-        mitAsignarCurso = new javax.swing.JMenuItem();
+        mitAdministarRector = new javax.swing.JMenuItem();
         editMenu = new javax.swing.JMenu();
-        mitAgregarAlumno = new javax.swing.JMenuItem();
-        mitCrearActividad = new javax.swing.JMenuItem();
-        mitVerCursos = new javax.swing.JMenuItem();
+        mitAdministrarDocente = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -57,31 +59,28 @@ public class Principal extends javax.swing.JFrame {
         fileMenu.setMnemonic('f');
         fileMenu.setText("RECTOR");
 
-        mitAsignarCurso.setMnemonic('x');
-        mitAsignarCurso.setText("Administrar");
-        mitAsignarCurso.addActionListener(new java.awt.event.ActionListener() {
+        mitAdministarRector.setMnemonic('x');
+        mitAdministarRector.setText("Administrar");
+        mitAdministarRector.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                mitAsignarCursoActionPerformed(evt);
+                mitAdministarRectorActionPerformed(evt);
             }
         });
-        fileMenu.add(mitAsignarCurso);
+        fileMenu.add(mitAdministarRector);
 
         menuBar.add(fileMenu);
 
         editMenu.setMnemonic('e');
         editMenu.setText("DOCENTE");
 
-        mitAgregarAlumno.setMnemonic('t');
-        mitAgregarAlumno.setText("Agregar Alumno");
-        editMenu.add(mitAgregarAlumno);
-
-        mitCrearActividad.setMnemonic('y');
-        mitCrearActividad.setText("Crear Actividad");
-        editMenu.add(mitCrearActividad);
-
-        mitVerCursos.setMnemonic('p');
-        mitVerCursos.setText("Ver Curso");
-        editMenu.add(mitVerCursos);
+        mitAdministrarDocente.setMnemonic('t');
+        mitAdministrarDocente.setText("Administrar");
+        mitAdministrarDocente.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                mitAdministrarDocenteActionPerformed(evt);
+            }
+        });
+        editMenu.add(mitAdministrarDocente);
 
         menuBar.add(editMenu);
 
@@ -101,9 +100,19 @@ public class Principal extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void mitAsignarCursoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mitAsignarCursoActionPerformed
-        System.exit(0);
-    }//GEN-LAST:event_mitAsignarCursoActionPerformed
+    private void mitAdministarRectorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mitAdministarRectorActionPerformed
+        ocultar();
+        vistaAdministarRector.setVisible(true);
+    }//GEN-LAST:event_mitAdministarRectorActionPerformed
+
+    private void mitAdministrarDocenteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mitAdministrarDocenteActionPerformed
+        ocultar();
+        vistaAdministarDocente.setVisible(true);
+    }//GEN-LAST:event_mitAdministrarDocenteActionPerformed
+    private void ocultar() {
+        vistaAdministarDocente.setVisible(false);
+        vistaAdministarRector.setVisible(false);
+    }
 
     /**
      * @param args the command line arguments
@@ -146,12 +155,10 @@ public class Principal extends javax.swing.JFrame {
     private javax.swing.JMenu fileMenu;
     private javax.swing.JMenu fileMenu1;
     private javax.swing.JMenuBar menuBar;
-    private javax.swing.JMenuItem mitAgregarAlumno;
-    private javax.swing.JMenuItem mitAsignarCurso;
-    private javax.swing.JMenuItem mitCrearActividad;
+    private javax.swing.JMenuItem mitAdministarRector;
+    private javax.swing.JMenuItem mitAdministrarDocente;
     private javax.swing.JMenuItem mitFinalizarSesion;
     private javax.swing.JMenuItem mitInicioSesion;
-    private javax.swing.JMenuItem mitVerCursos;
     // End of variables declaration//GEN-END:variables
 
 }

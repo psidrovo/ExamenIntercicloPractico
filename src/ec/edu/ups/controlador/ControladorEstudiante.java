@@ -7,17 +7,23 @@ package ec.edu.ups.controlador;
 
 import ec.edu.ups.modelo.Estudiante;
 import ec.edu.ups.modelo.Persona;
+import java.util.List;
 
 /**
  *
  * @author Paul Idrovo
  */
 public class ControladorEstudiante {
-    public void Crear(Estudiante estudiante){
+    public void crear(Estudiante estudiante){
         if(estudiante.crearPersona((Persona)estudiante)){
             int idPersona = estudiante.idPersona(estudiante.getCedula());
             estudiante.setIdEs(idPersona);
             estudiante.crearEstudiante(estudiante);
         }
+    }
+    
+    public List<Estudiante> listaEstudiantes(){
+         List<Estudiante> estudiantes = new Estudiante().listaEstudiantes();
+         return estudiantes;
     }
 }

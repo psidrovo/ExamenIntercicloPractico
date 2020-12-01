@@ -18,8 +18,7 @@ public class DatoActividad {
     public DatoActividad() {
     }
 
-    public DatoActividad(int id, int actividadId, String titulo, String link) {
-        this.id = id;
+    public DatoActividad(int actividadId, String titulo, String link) {
         this.actividadId = actividadId;
         this.titulo = titulo;
         this.link = link;

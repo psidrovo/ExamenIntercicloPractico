@@ -30,13 +30,13 @@
             <Property name="text" type="java.lang.String" value="RECTOR"/>
           </Properties>
           <SubComponents>
-            <MenuItem class="javax.swing.JMenuItem" name="mitAsignarCurso">
+            <MenuItem class="javax.swing.JMenuItem" name="mitAdministarRector">
               <Properties>
                 <Property name="mnemonic" type="int" value="120"/>
                 <Property name="text" type="java.lang.String" value="Administrar"/>
               </Properties>
               <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="mitAsignarCursoActionPerformed"/>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="mitAdministarRectorActionPerformed"/>
               </Events>
             </MenuItem>
           </SubComponents>
@@ -47,23 +47,14 @@
             <Property name="text" type="java.lang.String" value="DOCENTE"/>
           </Properties>
           <SubComponents>
-            <MenuItem class="javax.swing.JMenuItem" name="mitAgregarAlumno">
+            <MenuItem class="javax.swing.JMenuItem" name="mitAdministrarDocente">
               <Properties>
                 <Property name="mnemonic" type="int" value="116"/>
-                <Property name="text" type="java.lang.String" value="Agregar Alumno"/>
+                <Property name="text" type="java.lang.String" value="Administrar"/>
               </Properties>
-            </MenuItem>
-            <MenuItem class="javax.swing.JMenuItem" name="mitCrearActividad">
-              <Properties>
-                <Property name="mnemonic" type="int" value="121"/>
-                <Property name="text" type="java.lang.String" value="Crear Actividad"/>
-              </Properties>
-            </MenuItem>
-            <MenuItem class="javax.swing.JMenuItem" name="mitVerCursos">
-              <Properties>
-                <Property name="mnemonic" type="int" value="112"/>
-                <Property name="text" type="java.lang.String" value="Ver Curso"/>
-              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="mitAdministrarDocenteActionPerformed"/>
+              </Events>
             </MenuItem>
           </SubComponents>
         </Menu>

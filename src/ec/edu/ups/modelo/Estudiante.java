@@ -6,8 +6,11 @@
 package ec.edu.ups.modelo;
 
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import javax.swing.JOptionPane;
 
 /**
@@ -68,4 +71,33 @@ public class Estudiante extends Persona{
         }
     }
     
+    public List<Estudiante> listaEstudiantes(){
+        List<Estudiante> estudiantes = new ArrayList<>();
+        String sqlstm = """
+                        SELECT pr.id, pr.cedula, pr.nombre, pr.apellido, pr.fechaNacimiento, pr.genero FROM unidadeducativa.persona as pr 
+                        inner join unidadeducativa.estudiante as est on est.estudianteId = pr.id""";
+        try {
+            ConexionSql.getConnection();
+            Connection conn = ConexionSql.getConn();//Direcion
+            Statement stmt = conn.createStatement();//Puerta
+            ResultSet rs; //Resultados
+            rs = stmt.executeQuery(sqlstm);
+            while (rs.next()) {
+                Estudiante est = new Estudiante();
+                est.setId(rs.getInt("id"));
+                est.setCedula(rs.getString("cedula"));
+                est.setNombre(rs.getString("nombre"));
+                est.setApellido(rs.getString("apellido"));
+                est.setDireccion(rs.getString("direccion"));
+                est.setFecha(rs.getDate("fechaNacimiento"));
+                est.setGenero(rs.getString("genero"));
+                estudiantes.add(est);
+            }
+            stmt.close();
+            rs.close();
+        } catch (Exception e) {
+            System.out.println("ERROR LISTA DE ESTUDIANTES");
+        }
+        return estudiantes;
+    }
 }

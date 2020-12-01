@@ -14,6 +14,7 @@ import javax.swing.JOptionPane;
  * @author Paul Idrovo
  */
 public class Persona {
+
     private int id;
     private String cedula;
     private String nombre;
@@ -33,7 +34,7 @@ public class Persona {
         this.fecha = fecha;
         this.genero = genero;
     }
-    
+
     public int getId() {
         return id;
     }
@@ -90,11 +91,9 @@ public class Persona {
         this.genero = genero;
     }
 
-    
-    
-    public boolean crearPersona (Persona persona){        
+    public boolean crearPersona(Persona persona) {
         String sqlstm = "INSERT INTO  `unidadeducativa`.`persona` (`cedula`, `nombre`,`apellido`,`direccion`,`fechaNacimiento`, `genero`) "
-                + "VALUES ('" + persona.getCedula() + "', '" + persona.getNombre() + "', '" + persona.getApellido()+ "', '" + persona.getDireccion()+ "', '" + persona.getFecha()+ "','" + persona.getGenero()+ "')";
+                + "VALUES ('" + persona.getCedula() + "', '" + persona.getNombre() + "', '" + persona.getApellido() + "', '" + persona.getDireccion() + "', '" + persona.getFecha() + "','" + persona.getGenero() + "')";
         try {
             ConexionSql.getConnection();
             Connection conn = ConexionSql.getConn();
@@ -102,13 +101,25 @@ public class Persona {
             stmt.executeUpdate(sqlstm);
             return true;
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, "YA EXISTE UNA CEDULA REGISTRADA CON ESE NUMERO", "ERROR DE DATOS", JOptionPane.WARNING_MESSAGE);
-            return false;
+            switch (e.getMessage()) {
+                case "Data truncation: Incorrect date value: 'null' for column 'fechaNacimiento' at row 1" -> {
+                    JOptionPane.showMessageDialog(null, "FORMATO DE FECHA NO VALIDA", "ERROR DE DATOS", JOptionPane.WARNING_MESSAGE);
+                    return false;
+                }
+                case "Data truncated for column 'genero' at row 1" -> {
+                    JOptionPane.showMessageDialog(null, "SELECCIONE UN GENERO", "ERROR DE DATOS", JOptionPane.WARNING_MESSAGE);
+                    return false;
+                }
+                default -> {
+                    JOptionPane.showMessageDialog(null, "YA EXISTE UNA CEDULA REGISTRADA CON ESE NUMERO", "ERROR DE DATOS", JOptionPane.WARNING_MESSAGE);
+                    return false;
+                }
+            }
         }
     }
-    
-    public int idPersona (String cedula){
-        String sqlstm = "SELECT id FROM unidadeducativa.persona where cedula = '"+cedula+"'";
+
+    public int idPersona(String cedula) {
+        String sqlstm = "SELECT id FROM unidadeducativa.persona where cedula = '" + cedula + "'";
         try {
             ConexionSql.getConnection();
             Connection conn = ConexionSql.getConn();
@@ -124,8 +135,7 @@ public class Persona {
             JOptionPane.showMessageDialog(null, "ERROR AL BUSCAR CEDULA", "ERROR DE DATOS", JOptionPane.WARNING_MESSAGE);
         }
         return 0;
-        
+
     }
-    
-    
+
 }
