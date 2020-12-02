@@ -26,4 +26,12 @@ public class ControladorActividad {
          List<Actividad> actividads = new Actividad().datosActividades(actividadId);
          return actividads;
     }
+    
+    public void GuardarDatos(List<Actividad> datosActividades){
+        Actividad actividad = new Actividad();
+        actividad.eliminarDatosActividades(datosActividades.get(0).getActividadId());
+        datosActividades.forEach(datosActividade -> {
+            actividad.crearDatoActividad(datosActividade);
+        });
+    }
 }

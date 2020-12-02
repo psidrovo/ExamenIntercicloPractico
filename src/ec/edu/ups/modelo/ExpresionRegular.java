@@ -38,6 +38,32 @@ public class ExpresionRegular {
         }
         return 0;
     }
+    public String obtenerTexto(String texto) {
+        corpus = patron.matcher(texto);
+        while (corpus.find()) {
+            String id = (corpus.group(0));
+            return id;
+        }
+        return "0";
+    }
+
+    public Set <String> obtenerUrlGoogle(String paginaTexto) {
+        Set <String> resutaldos = new HashSet();
+        corpus = patron.matcher(paginaTexto);
+        while (corpus.find()) {
+            resutaldos.add(corpus.group(0));
+        }
+        return resutaldos;
+    }
+    
+    public String obtenertitulo(String paginaTexto) {
+        corpus = patron.matcher(paginaTexto);
+        while (corpus.find()) {
+            String titulo = (corpus.group(0));
+            return titulo;
+        }
+        return "TITULO NO ENCONTRADO";
+    }
 
     public Pattern getPatron() {
         return patron;

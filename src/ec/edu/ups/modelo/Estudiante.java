@@ -59,7 +59,7 @@ public class Estudiante extends Persona{
     }
     
     public void crearEstudiante(Estudiante estudiante){
-        String sqlstm = "INSERT INTO  `unidadeducativa`.`estudiante` (`estudianteId`, `crusoID`) "
+        String sqlstm = "INSERT INTO  `unidadeducativa`.`estudiante` (`estudianteId`, `cursoID`) "
                 + "VALUES ('" + estudiante.getEstudianteId()+ "', '" + estudiante.getCrusoId()+ "')";
         try {
             ConexionSql.getConnection();
@@ -73,7 +73,7 @@ public class Estudiante extends Persona{
     
     public List<Estudiante> listaEstudiantes(int id){
         List<Estudiante> estudiantes = new ArrayList<>();
-        String sqlstm = "SELECT pr.id, pr.cedula, pr.nombre, pr.apellido, pr.fechaNacimiento, pr.genero FROM unidadeducativa.persona as pr"
+        String sqlstm = "SELECT pr.id, pr.cedula, pr.nombre, pr.apellido, pr.direccion, pr.fechaNacimiento, pr.genero FROM unidadeducativa.persona as pr"
                         +" inner join unidadeducativa.estudiante as est on est.estudianteId = pr.id where est.cursoId = " + id;
         try {
             ConexionSql.getConnection();

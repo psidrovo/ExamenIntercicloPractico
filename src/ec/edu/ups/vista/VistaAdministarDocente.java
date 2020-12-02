@@ -11,7 +11,19 @@ import ec.edu.ups.modelo.Actividad;
 import ec.edu.ups.modelo.Estudiante;
 import ec.edu.ups.modelo.ExpresionRegular;
 import ec.edu.ups.modelo.ValidarSesion;
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
 import java.time.ZoneId;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
@@ -62,10 +74,13 @@ public class VistaAdministarDocente extends javax.swing.JInternalFrame {
         jScrollPane1 = new javax.swing.JScrollPane();
         tblAlumno = new javax.swing.JTable();
         jScrollPane2 = new javax.swing.JScrollPane();
-        jTable2 = new javax.swing.JTable();
+        tblActividades = new javax.swing.JTable();
         cmbActividad = new javax.swing.JComboBox<>();
         jLabel25 = new javax.swing.JLabel();
         btnCargarActividad = new javax.swing.JButton();
+        btnActualizarActividad = new javax.swing.JButton();
+        btnAgregarNuevosParametros = new javax.swing.JButton();
+        lblIdA = new javax.swing.JLabel();
 
         addInternalFrameListener(new javax.swing.event.InternalFrameListener() {
             public void internalFrameActivated(javax.swing.event.InternalFrameEvent evt) {
@@ -142,7 +157,7 @@ public class VistaAdministarDocente extends javax.swing.JInternalFrame {
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addGap(150, 150, 150)
                         .addComponent(btnGuardarAlumno)))
-                .addContainerGap(86, Short.MAX_VALUE))
+                .addGap(86, 86, 86))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -178,7 +193,7 @@ public class VistaAdministarDocente extends javax.swing.JInternalFrame {
 
         jPanel5.setBorder(javax.swing.BorderFactory.createTitledBorder("ACTIVIDAD"));
 
-        jLabel19.setText("ACTIVIDAD");
+        jLabel19.setText("NOMBRE ACTIVIDAD");
 
         btnGuardarActividad.setText("GUARDAR");
         btnGuardarActividad.addActionListener(new java.awt.event.ActionListener() {
@@ -194,7 +209,7 @@ public class VistaAdministarDocente extends javax.swing.JInternalFrame {
             .addGroup(jPanel5Layout.createSequentialGroup()
                 .addGap(10, 10, 10)
                 .addComponent(jLabel19)
-                .addGap(70, 70, 70)
+                .addGap(25, 25, 25)
                 .addComponent(txtNombreActividad, javax.swing.GroupLayout.PREFERRED_SIZE, 251, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(54, 54, 54))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel5Layout.createSequentialGroup()
@@ -214,7 +229,6 @@ public class VistaAdministarDocente extends javax.swing.JInternalFrame {
                 .addContainerGap())
         );
 
-        tblAlumno.setBorder(javax.swing.BorderFactory.createTitledBorder("ALMUNOS"));
         tblAlumno.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
@@ -238,8 +252,7 @@ public class VistaAdministarDocente extends javax.swing.JInternalFrame {
             tblAlumno.getColumnModel().getColumn(0).setMaxWidth(140);
         }
 
-        jTable2.setBorder(javax.swing.BorderFactory.createTitledBorder("ACTIVIDADES"));
-        jTable2.setModel(new javax.swing.table.DefaultTableModel(
+        tblActividades.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
@@ -255,14 +268,17 @@ public class VistaAdministarDocente extends javax.swing.JInternalFrame {
                 return canEdit [columnIndex];
             }
         });
-        jScrollPane2.setViewportView(jTable2);
-        if (jTable2.getColumnModel().getColumnCount() > 0) {
-            jTable2.getColumnModel().getColumn(0).setMinWidth(80);
-            jTable2.getColumnModel().getColumn(0).setPreferredWidth(80);
-            jTable2.getColumnModel().getColumn(0).setMaxWidth(140);
+        jScrollPane2.setViewportView(tblActividades);
+        if (tblActividades.getColumnModel().getColumnCount() > 0) {
+            tblActividades.getColumnModel().getColumn(0).setMinWidth(80);
+            tblActividades.getColumnModel().getColumn(0).setPreferredWidth(80);
+            tblActividades.getColumnModel().getColumn(0).setMaxWidth(140);
+            tblActividades.getColumnModel().getColumn(1).setMinWidth(150);
+            tblActividades.getColumnModel().getColumn(1).setPreferredWidth(200);
+            tblActividades.getColumnModel().getColumn(1).setMaxWidth(250);
         }
 
-        cmbActividad.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "SELECCIONAR ACTIVIDAD", "MASCULINO", "FEMENINO" }));
+        cmbActividad.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "SELECCIONAR ACTIVIDAD" }));
 
         jLabel25.setText("SELEC. ACTIVIDAD");
 
@@ -273,6 +289,22 @@ public class VistaAdministarDocente extends javax.swing.JInternalFrame {
             }
         });
 
+        btnActualizarActividad.setText("ACTUALIZAR");
+        btnActualizarActividad.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnActualizarActividadActionPerformed(evt);
+            }
+        });
+
+        btnAgregarNuevosParametros.setText("GUARDAR");
+        btnAgregarNuevosParametros.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAgregarNuevosParametrosActionPerformed(evt);
+            }
+        });
+
+        lblIdA.setText("jLabel1");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -280,46 +312,60 @@ public class VistaAdministarDocente extends javax.swing.JInternalFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(70, 70, 70)
-                        .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(10, 10, 10)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 591, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 591, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(70, 70, 70)
+                        .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(10, 10, 10)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(lblIdA)
+                        .addGap(51, 51, 51)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jScrollPane2)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                .addGroup(layout.createSequentialGroup()
-                                    .addComponent(jLabel25)
-                                    .addGap(35, 35, 35)
-                                    .addComponent(cmbActividad, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addContainerGap())
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addGap(206, 206, 206)
-                        .addComponent(btnCargarActividad)
-                        .addGap(239, 239, 239))))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(4, 4, 4)
+                                .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel25)
+                                .addGap(35, 35, 35)
+                                .addComponent(cmbActividad, javax.swing.GroupLayout.PREFERRED_SIZE, 329, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(btnCargarActividad, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(95, 95, 95)
+                                .addComponent(btnActualizarActividad)
+                                .addGap(81, 81, 81)
+                                .addComponent(btnAgregarNuevosParametros, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(123, 123, 123))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jScrollPane2)
+                        .addContainerGap())))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(35, 35, 35)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel25)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(3, 3, 3)
+                                .addComponent(jLabel25))
                             .addComponent(cmbActividad, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(20, 20, 20)
-                        .addComponent(btnCargarActividad)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(33, 33, 33)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(btnCargarActividad)
+                                .addComponent(lblIdA))
+                            .addComponent(btnActualizarActividad)
+                            .addComponent(btnAgregarNuevosParametros))))
+                .addGap(12, 12, 12)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 416, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                .addGap(11, 11, 11))
         );
 
         pack();
@@ -353,18 +399,76 @@ public class VistaAdministarDocente extends javax.swing.JInternalFrame {
     private void btnCargarActividadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCargarActividadActionPerformed
         ExpresionRegular ex = new ExpresionRegular();
         ex.ingresarRegex("\\d+");
-        if (ex.validar(cmbActividad.getSelectedItem().toString()))
+        if (ex.validar(cmbActividad.getSelectedItem().toString())) {
+            lblIdA.setText(ex.obtenerId(cmbActividad.getSelectedItem().toString()) + "");
             cargarDatosAsignatura(ex.obtenerId(cmbActividad.getSelectedItem().toString()));
-        else
+        } else {
             JOptionPane.showMessageDialog(null, "SELECCIONE UNA ACTIVIDAD", "ERROR DE DATOS", JOptionPane.WARNING_MESSAGE);
+        }
     }//GEN-LAST:event_btnCargarActividadActionPerformed
 
     private void formInternalFrameActivated(javax.swing.event.InternalFrameEvent evt) {//GEN-FIRST:event_formInternalFrameActivated
+        lblIdA.setVisible(false);
         cargarEstudiantes();
         cargarActividades();
         limpiarDatosEstudiante();
         txtNombreActividad.setText("");
+        eliminarDatosActividadTabla();
     }//GEN-LAST:event_formInternalFrameActivated
+    private void eliminarDatosActividadTabla(){
+        DefaultTableModel modelo = (DefaultTableModel) tblActividades.getModel();
+        modelo.setRowCount(0);
+        tblActividades.setModel(modelo);
+    }
+    private void btnActualizarActividadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnActualizarActividadActionPerformed
+        JOptionPane.showMessageDialog(null, "REALIZANDO BUSQUEDA WEB - ESTO PUEDE TARDAR UNOS MINUTOS - PRESIONE APCETAR");
+        eliminarDatosActividadTabla();
+        ExpresionRegular ex = new ExpresionRegular();
+        ExpresionRegular exUrl = new ExpresionRegular();
+        ExpresionRegular exTitulo = new ExpresionRegular();
+        //EXPRESIONES REGULARES
+        ex.ingresarRegex("\\d+");
+        lblIdA.setText(ex.obtenerId(cmbActividad.getSelectedItem().toString()) + "");
+        ex.ingresarRegex("\\s{2}\\w+");
+        exUrl.ingresarRegex("<a href=\\\"\\/store\\/apps\\/details\\?id=((\\w)+\\.?)+");
+        exTitulo.ingresarRegex("title\">(\\w+\\s?:?\\s?)+");
+
+        if (ex.validar(cmbActividad.getSelectedItem().toString())) {
+            String url = ex.obtenerTexto(cmbActividad.getSelectedItem().toString());
+            url = url.replace("  ", "").replaceAll("\\s", "\\%20");
+            url = "https://play.google.com/store/search?q=" + url + "&c=apps";
+            StringBuilder stringBuilder = conexionURL(url);
+            Set<String> resultado = exUrl.obtenerUrlGoogle(stringBuilder.toString());
+            DefaultTableModel modelo = (DefaultTableModel) tblActividades.getModel();
+            modelo.setRowCount(0);
+            tblActividades.setModel(modelo);
+            Object[] fila = new Object[3];
+
+            resultado.stream().map(link -> link.replace("<a href=\"", "https://play.google.com")).forEachOrdered(urlTitulo -> {
+                StringBuilder stringBuildertTitulo = conexionURL(urlTitulo);
+                String titulo = exTitulo.obtenertitulo(stringBuildertTitulo.toString());
+                fila[0] = "N/A";
+                fila[1] = titulo.replace("title\">", "");
+                fila[2] = urlTitulo;
+                modelo.addRow(fila);
+            });
+            this.tblActividades.setModel(modelo);
+        } else {
+            JOptionPane.showMessageDialog(null, "SELECCIONE UNA ACTIVIDAD", "ERROR DE DATOS", JOptionPane.WARNING_MESSAGE);
+        }
+    }//GEN-LAST:event_btnActualizarActividadActionPerformed
+
+    private void btnAgregarNuevosParametrosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAgregarNuevosParametrosActionPerformed
+        int numFilas = tblActividades.getRowCount();
+        List<Actividad> listaDatosActividades = new ArrayList<>();
+        for (int i = 0; i < numFilas; i++) {
+            listaDatosActividades.add(new Actividad(Integer.parseInt(lblIdA.getText()), tblActividades.getValueAt(i, 1).toString(), tblActividades.getValueAt(i, 2).toString()));
+        }
+        controladorActividad.GuardarDatos(listaDatosActividades);
+        eliminarDatosActividadTabla();
+        JOptionPane.showMessageDialog(null, "DATOS ALMACENADOS");
+
+    }//GEN-LAST:event_btnAgregarNuevosParametrosActionPerformed
 
     private void cargarEstudiantes() {
         DefaultTableModel modelo = (DefaultTableModel) tblAlumno.getModel();
@@ -400,9 +504,9 @@ public class VistaAdministarDocente extends javax.swing.JInternalFrame {
     }
 
     private void cargarDatosAsignatura(int actividadId) {
-        DefaultTableModel modelo = (DefaultTableModel) tblAlumno.getModel();
+        DefaultTableModel modelo = (DefaultTableModel) tblActividades.getModel();
         modelo.setRowCount(0);
-        tblAlumno.setModel(modelo);
+        tblActividades.setModel(modelo);
         Object[] fila = new Object[7];
         controladorActividad.listaDatosActividades(actividadId).stream().map(datosActividad -> {
             fila[0] = datosActividad.getId();
@@ -410,28 +514,55 @@ public class VistaAdministarDocente extends javax.swing.JInternalFrame {
         }).map(datosActividad -> {
             fila[1] = datosActividad.getTema();
             return datosActividad;
-        }).forEachOrdered(datosActividad -> {
+        }).map(datosActividad -> {
             fila[2] = datosActividad.getLink();
+            return datosActividad;
+        }).forEachOrdered(_item -> {
+            modelo.addRow(fila);
         });
-        this.tblAlumno.setModel(modelo);
+        this.tblActividades.setModel(modelo);
     }
 
-    private void limpiarDatosEstudiante(){
+    private void limpiarDatosEstudiante() {
         txtCedula.setText("");
         txtNombre.setText("");
         txtApellido.setText("");
         txtDireccion.setText("");
     }
+
     private void cargarActividades() {
-        cmbActividad.removeAll();
+        cmbActividad.removeAllItems();
         cmbActividad.addItem("SELECIONAR ACTIVIDAD");
         controladorActividad.listaActividades(sesionIniciado.getCurso()).forEach(actividad -> {
-            cmbActividad.addItem(actividad.getId() + " - " + actividad.getTema());
+            cmbActividad.addItem(actividad.getId() + " -  " + actividad.getTema());
         });
     }
-    
+
+    private StringBuilder conexionURL(String url) {
+        StringBuilder stringBuilder = new StringBuilder();
+        try {
+            URL urlObject = new URL(url);
+            URLConnection urlConnection = urlObject.openConnection();
+            urlConnection.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11");
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream(), "UTF-8"));
+
+            String inputLine;
+            while ((inputLine = bufferedReader.readLine()) != null) {
+                stringBuilder.append(inputLine);
+            }
+        } catch (FileNotFoundException ex) {
+
+        } catch (MalformedURLException ex) {
+            Logger.getLogger(VistaAdministarDocente.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(VistaAdministarDocente.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return stringBuilder;
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnActualizarActividad;
+    private javax.swing.JButton btnAgregarNuevosParametros;
     private javax.swing.JButton btnCargarActividad;
     private javax.swing.JButton btnGuardarActividad;
     private javax.swing.JButton btnGuardarAlumno;
@@ -450,7 +581,8 @@ public class VistaAdministarDocente extends javax.swing.JInternalFrame {
     private javax.swing.JPanel jPanel5;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JTable jTable2;
+    private javax.swing.JLabel lblIdA;
+    private javax.swing.JTable tblActividades;
     private javax.swing.JTable tblAlumno;
     private javax.swing.JTextField txtApellido;
     private javax.swing.JTextField txtCedula;

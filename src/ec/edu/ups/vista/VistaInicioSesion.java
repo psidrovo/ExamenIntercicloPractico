@@ -39,11 +39,6 @@ public class VistaInicioSesion extends javax.swing.JInternalFrame {
         pswContraseña = new javax.swing.JPasswordField();
         txtUsuario = new javax.swing.JTextField();
 
-        addFocusListener(new java.awt.event.FocusAdapter() {
-            public void focusGained(java.awt.event.FocusEvent evt) {
-                formFocusGained(evt);
-            }
-        });
         addInternalFrameListener(new javax.swing.event.InternalFrameListener() {
             public void internalFrameActivated(javax.swing.event.InternalFrameEvent evt) {
                 formInternalFrameActivated(evt);
@@ -157,10 +152,6 @@ public class VistaInicioSesion extends javax.swing.JInternalFrame {
             JOptionPane.showMessageDialog(null, "CORREO Y/O CONTRASEÑA INCORRECTOS", "ERROR", JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_btIniciarActionPerformed
-
-    private void formFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_formFocusGained
-        // TODO add your handling code here:
-    }//GEN-LAST:event_formFocusGained
 
     private void formInternalFrameActivated(javax.swing.event.InternalFrameEvent evt) {//GEN-FIRST:event_formInternalFrameActivated
         txtUsuario.setText("");

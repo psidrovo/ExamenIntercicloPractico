@@ -328,6 +328,7 @@ public class VistaAdministarRector extends javax.swing.JInternalFrame {
             controladorUsuario.crear(new Usuario(txtCorreo.getText(), txtPassword.getText(), "DOCENTE", txtCedula.getText(), txtNombre.getText(), txtApellido.getText(), txtDireccion.getText(), fechaSql, cmbGenero.getSelectedItem().toString()));
             cargarDocentes();
             limpiarDatosDocente();
+            JOptionPane.showMessageDialog(null, "DOCENTE CREADO EXITOSAMENTE", "LOGIN", JOptionPane.INFORMATION_MESSAGE);
         }
     }//GEN-LAST:event_btnGuardarDocenteActionPerformed
 
@@ -335,15 +336,18 @@ public class VistaAdministarRector extends javax.swing.JInternalFrame {
         controladorCurso.crear(new Curso(txtNombreCurso.getText()));
         cargarCursos();
         txtNombreCurso.setText("");
+        JOptionPane.showMessageDialog(null, "CURSO CREADO EXITOSAMENTE", "LOGIN", JOptionPane.INFORMATION_MESSAGE);
     }//GEN-LAST:event_btnGuardarCursoActionPerformed
 
     private void btnGuardarAdministracionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarAdministracionActionPerformed
         ExpresionRegular ex = new ExpresionRegular();
         ex.ingresarRegex("\\d+");
-        if (ex.validar(cmbDocente.getSelectedItem().toString()) && ex.validar(cmbCurso.getSelectedItem().toString()))
+        if (ex.validar(cmbDocente.getSelectedItem().toString()) && ex.validar(cmbCurso.getSelectedItem().toString())){
             controladorCurso.asignarDocente(new Curso(ex.obtenerId(cmbCurso.getSelectedItem().toString()), ex.obtenerId(cmbDocente.getSelectedItem().toString())));
-        else
+            JOptionPane.showMessageDialog(null, "ASIGNADO CORRECTAMENTE EXITOSAMENTE", "LOGIN", JOptionPane.INFORMATION_MESSAGE);
+        }else{
             JOptionPane.showMessageDialog(null, "NO SE HA SELECCIONA UN DOCENTE Y/O CURSO", "ERROR DE DATOS", JOptionPane.WARNING_MESSAGE);
+        }
     }//GEN-LAST:event_btnGuardarAdministracionActionPerformed
 
     private void formInternalFrameActivated(javax.swing.event.InternalFrameEvent evt) {//GEN-FIRST:event_formInternalFrameActivated
@@ -354,7 +358,7 @@ public class VistaAdministarRector extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_formInternalFrameActivated
 
     private void cargarDocentes() {
-        cmbDocente.removeAll();
+        cmbDocente.removeAllItems();
         cmbDocente.addItem("SELECIONAR DOCENTE");
         controladorUsuario.listaDocentes().forEach(usuario -> {
             cmbDocente.addItem(usuario.getId() + " - " + usuario.getNombre() + " " + usuario.getApellido());
@@ -362,7 +366,7 @@ public class VistaAdministarRector extends javax.swing.JInternalFrame {
     }
 
     private void cargarCursos() {
-        cmbCurso.removeAll();
+        cmbCurso.removeAllItems();
         cmbCurso.addItem("SELECIONAR CURSO");
         controladorCurso.listaCursos().forEach(curso -> {
             cmbCurso.addItem(curso.getId() + " - " + curso.getNombre());

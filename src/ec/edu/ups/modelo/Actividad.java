@@ -35,6 +35,10 @@ public class Actividad extends DatoActividad{
         this.cursoId = cursoId;
         this.tema = tema;
     }
+
+    public Actividad(int actividadId, String titulo, String link) {
+        super(actividadId, titulo, link);
+    }
     
 
     public int getId() {
@@ -119,5 +123,28 @@ public class Actividad extends DatoActividad{
             System.out.println("ERROR LISTA DE DATOS ACTIVIDADES");
         }
         return actividades;
+    }
+    public void eliminarDatosActividades(int idActividad){
+        String sqlstm = "DELETE FROM `unidadeducativa`.`datoactividad` WHERE (`actividadId` = '"+ idActividad+"');";
+        try {
+            ConexionSql.getConnection();
+            Connection conn = ConexionSql.getConn();
+            Statement stmt = conn.createStatement();
+            stmt.executeUpdate(sqlstm);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "ERROR DE DATOS", "ERROR DE DATOS", JOptionPane.WARNING_MESSAGE);
+        }
+    }
+    public void crearDatoActividad(Actividad actividad){
+        String sqlstm = "INSERT INTO  `unidadeducativa`.`datoactividad` (`actividadId`, `titulo`, `link`) "
+                + "VALUES ('" + actividad.getActividadId()+ "', '" + actividad.getTitulo()+ "', '" + actividad.getTitulo()+ "')";
+        try {
+            ConexionSql.getConnection();
+            Connection conn = ConexionSql.getConn();
+            Statement stmt = conn.createStatement();
+            stmt.executeUpdate(sqlstm);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "ERROR DE DATOS", "ERROR DE DATOS", JOptionPane.WARNING_MESSAGE);
+        }
     }
 }
